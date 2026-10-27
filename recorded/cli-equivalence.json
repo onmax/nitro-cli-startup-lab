@@ -1,0 +1,143 @@
+[
+  {
+    "args": [
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "-h"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "--version"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "-v"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "build",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "dev",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "serve",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "start",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "preview",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "deploy",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "task",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "task",
+      "list",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "task",
+      "run",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "create",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "docs",
+      "--help"
+    ],
+    "identical": true,
+    "exitCode": 0
+  },
+  {
+    "args": [
+      "nonexistent"
+    ],
+    "identical": true,
+    "exitCode": 1
+  },
+  {
+    "args": [
+      "task",
+      "nonexistent"
+    ],
+    "identical": true,
+    "exitCode": 1
+  },
+  {
+    "args": [
+      "task",
+      "run"
+    ],
+    "identical": true,
+    "exitCode": 1
+  }
+]

@@ -1,0 +1,162 @@
+[
+  {
+    "name": "baseline / --help",
+    "n": 15,
+    "median": 128.987441,
+    "min": 126.4146,
+    "max": 132.120089,
+    "errors": 0
+  },
+  {
+    "name": "recommended / --help",
+    "n": 15,
+    "median": 27.26246,
+    "min": 25.486308,
+    "max": 31.281275,
+    "errors": 0
+  },
+  {
+    "name": "baseline / --version",
+    "n": 15,
+    "median": 27.34285,
+    "min": 25.425193,
+    "max": 32.479055,
+    "errors": 0
+  },
+  {
+    "name": "recommended / --version",
+    "n": 15,
+    "median": 26.901685,
+    "min": 25.934557,
+    "max": 28.241891,
+    "errors": 0
+  },
+  {
+    "name": "baseline / build --help",
+    "n": 15,
+    "median": 122.998632,
+    "min": 119.848923,
+    "max": 126.843552,
+    "errors": 0
+  },
+  {
+    "name": "recommended / build --help",
+    "n": 15,
+    "median": 27.983618,
+    "min": 25.549817,
+    "max": 30.152765,
+    "errors": 0
+  },
+  {
+    "name": "baseline / dev --help",
+    "n": 15,
+    "median": 123.394002,
+    "min": 120.118897,
+    "max": 129.590679,
+    "errors": 0
+  },
+  {
+    "name": "recommended / dev --help",
+    "n": 15,
+    "median": 26.950476,
+    "min": 25.854677,
+    "max": 35.99544,
+    "errors": 0
+  },
+  {
+    "name": "baseline / serve --help",
+    "n": 15,
+    "median": 124.645702,
+    "min": 121.73527,
+    "max": 127.263748,
+    "errors": 0
+  },
+  {
+    "name": "recommended / serve --help",
+    "n": 15,
+    "median": 28.200985,
+    "min": 25.47104,
+    "max": 30.794244,
+    "errors": 0
+  },
+  {
+    "name": "baseline / task --help",
+    "n": 15,
+    "median": 123.754607,
+    "min": 119.32861,
+    "max": 131.517463,
+    "errors": 0
+  },
+  {
+    "name": "recommended / task --help",
+    "n": 15,
+    "median": 29.301132,
+    "min": 27.10727,
+    "max": 31.778274,
+    "errors": 0
+  },
+  {
+    "name": "baseline / task run --help",
+    "n": 15,
+    "median": 123.543241,
+    "min": 117.859642,
+    "max": 126.539143,
+    "errors": 0
+  },
+  {
+    "name": "recommended / task run --help",
+    "n": 15,
+    "median": 29.135843,
+    "min": 27.034564,
+    "max": 34.318815,
+    "errors": 0
+  },
+  {
+    "name": "baseline / deploy --help",
+    "n": 15,
+    "median": 123.64388,
+    "min": 120.881734,
+    "max": 128.078402,
+    "errors": 0
+  },
+  {
+    "name": "recommended / deploy --help",
+    "n": 15,
+    "median": 28.39618,
+    "min": 26.536312,
+    "max": 34.442405,
+    "errors": 0
+  },
+  {
+    "name": "baseline / build 1 routes",
+    "n": 15,
+    "median": 230.1761,
+    "min": 224.726019,
+    "max": 235.640048,
+    "errors": 0
+  },
+  {
+    "name": "recommended / build 1 routes",
+    "n": 15,
+    "median": 230.72115,
+    "min": 227.461915,
+    "max": 239.321953,
+    "errors": 0
+  },
+  {
+    "name": "baseline / build 100 routes",
+    "n": 15,
+    "median": 266.365493,
+    "min": 259.344253,
+    "max": 278.777493,
+    "errors": 0
+  },
+  {
+    "name": "recommended / build 100 routes",
+    "n": 15,
+    "median": 268.164938,
+    "min": 263.528648,
+    "max": 281.96295,
+    "errors": 0
+  }
+]

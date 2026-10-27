@@ -1,0 +1,273 @@
+--- a/src/cli/index.ts
++++ b/src/cli/index.ts
+@@ -1,5 +1,6 @@
+ #!/usr/bin/env node
+ import { defineCommand, runMain } from "citty";
++import type { ArgsDef, CommandDef, CommandMeta } from "citty";
+ import { version as nitroVersion } from "#nitro/meta";
+ 
+ const main = defineCommand({
+@@ -9,16 +10,82 @@
+     version: nitroVersion,
+   },
+   subCommands: {
+-    create: () => import("./commands/create/index.ts").then((r) => r.default),
+-    dev: () => import("./commands/dev.ts").then((r) => r.default),
+-    build: () => import("./commands/build.ts").then((r) => r.default),
+-    deploy: () => import("./commands/deploy.ts").then((r) => r.default),
++    create: lazyCommand(
++      {
++        name: "create",
++        description: "Create a new Nitro project",
++      },
++      () => import("./commands/create/index.ts").then((r) => r.default)
++    ),
++    dev: lazyCommand(
++      {
++        name: "dev",
++        description: "Start the development server",
++      },
++      () => import("./commands/dev.ts").then((r) => r.default)
++    ),
++    build: lazyCommand(
++      {
++        name: "build",
++        description: "Build nitro project for production",
++      },
++      () => import("./commands/build.ts").then((r) => r.default)
++    ),
++    deploy: lazyCommand(
++      {
++        name: "deploy",
++        description: "Build and deploy nitro project for production",
++      },
++      () => import("./commands/deploy.ts").then((r) => r.default)
++    ),
+     task: () => import("./commands/task/index.ts").then((r) => r.default),
+-    preview: () => import("./commands/preview.ts").then((r) => r.default),
+-    serve: () => import("./commands/serve.ts").then((r) => r.default),
+-    start: () => import("./commands/serve.ts").then((r) => r.default),
+-    docs: () => import("./commands/docs.ts").then((r) => r.default),
++    preview: lazyCommand(
++      {
++        name: "preview",
++        description: "Start a local server to preview the built server",
++      },
++      () => import("./commands/preview.ts").then((r) => r.default)
++    ),
++    serve: lazyCommand(
++      {
++        name: "serve",
++        description: "Start the server from the sources, without a build (`builder: false`)",
++      },
++      () => import("./commands/serve.ts").then((r) => r.default)
++    ),
++    start: lazyCommand(
++      {
++        name: "serve",
++        description: "Start the server from the sources, without a build (`builder: false`)",
++      },
++      () => import("./commands/serve.ts").then((r) => r.default)
++    ),
++    docs: lazyCommand(
++      {
++        name: "docs",
++        description: "Open Nitro documentation",
++      },
++      () => import("./commands/docs.ts").then((r) => r.default)
++    ),
+   },
+ });
+ 
+ runMain(main);
++
++function lazyCommand<T extends ArgsDef>(
++  meta: CommandMeta,
++  load: () => Promise<CommandDef<T>>
++): CommandDef<T> {
++  return defineCommand({
++    meta,
++    args: async () => {
++      const args = (await load()).args;
++      if (!args) throw new Error("Missing command args");
++      return typeof args === "function" ? args() : args;
++    },
++    run: async (ctx) => {
++      const cmd = await load();
++      return cmd.run?.({ ...ctx, cmd });
++    },
++  });
++}
+--- a/src/cli/commands/dev.ts
++++ b/src/cli/commands/dev.ts
+@@ -1,11 +1,6 @@
+ import type { Nitro, NitroConfig } from "nitro/types";
+ import { defineCommand } from "citty";
+-import { consola } from "consola";
+-import { build, createNitro, prepare } from "nitro/builder";
+-import { resolve } from "pathe";
+ import { commonArgs } from "../common.ts";
+-import { createDevServer } from "../../dev/server.ts";
+-import { onWatchError } from "../../utils/watch.ts";
+ 
+ const hmrKeyRe = /^runtimeConfig\.|routeRules\./;
+ 
+@@ -20,6 +15,7 @@
+     host: { type: "string", description: "specify hostname " },
+   },
+   async run({ args }) {
++    const { resolve } = await import("pathe");
+     await runDev({
+       rootDir: resolve((args.dir || args._dir || ".") as string),
+       port: args.port,
+@@ -34,6 +30,10 @@
+   host?: string;
+   config?: NitroConfig;
+ }) {
++  const { build, createNitro, prepare } = await import("nitro/builder");
++  const { createDevServer } = await import("../../dev/server.ts");
++  const { onWatchError } = await import("../../utils/watch.ts");
++  const { consola } = await import("consola");
+   let nitro: Nitro;
+   // Watcher errors (e.g. ENOSPC) from bundler internals cannot be handled at the source
+   process.on("uncaughtException", (error) => {
+--- a/src/cli/commands/deploy.ts
++++ b/src/cli/commands/deploy.ts
+@@ -1,16 +1,5 @@
+ import { defineCommand } from "citty";
+ import type { DateString } from "compatx";
+-import { resolve } from "pathe";
+-import consola from "consola";
+-import {
+-  build,
+-  copyPublicAssets,
+-  createNitro,
+-  deploy,
+-  getBuildInfo,
+-  prepare,
+-  prerender,
+-} from "nitro/builder";
+ import { buildArgs } from "./build.ts";
+ 
+ export default defineCommand({
+@@ -26,6 +15,10 @@
+     },
+   },
+   async run({ args, rawArgs }) {
++    const { resolve } = await import("pathe");
++    const { default: consola } = await import("consola");
++    const { build, copyPublicAssets, createNitro, deploy, getBuildInfo, prepare, prerender } =
++      await import("nitro/builder");
+     const rootDir = resolve((args.dir || args._dir || ".") as string);
+ 
+     let preset = args.preset;
+--- a/src/cli/commands/build.ts
++++ b/src/cli/commands/build.ts
+@@ -1,7 +1,5 @@
+ import { defineCommand } from "citty";
+ import type { DateString } from "compatx";
+-import { build, copyPublicAssets, createNitro, prepare, prerender } from "nitro/builder";
+-import { resolve } from "pathe";
+ import { commonArgs } from "../common.ts";
+ 
+ export const buildArgs = {
+@@ -33,6 +31,9 @@
+   },
+   args: buildArgs,
+   async run({ args }) {
++    const { resolve } = await import("pathe");
++    const { build, copyPublicAssets, createNitro, prepare, prerender } =
++      await import("nitro/builder");
+     const rootDir = resolve((args.dir || args._dir || ".") as string);
+     const nitro = await createNitro(
+       {
+--- a/src/cli/commands/preview.ts
++++ b/src/cli/commands/preview.ts
+@@ -1,9 +1,5 @@
+ import { defineCommand } from "citty";
+-import { resolve } from "pathe";
+ import { commonArgs } from "../common.ts";
+-import { startPreview } from "../../preview.ts";
+-import { serve } from "srvx";
+-import { loggerMiddleware } from "srvx/log";
+ 
+ export default defineCommand({
+   meta: {
+@@ -16,6 +12,10 @@
+     host: { type: "string", description: "specify hostname" },
+   },
+   async run({ args }) {
++    const { resolve } = await import("pathe");
++    const { serve } = await import("srvx");
++    const { loggerMiddleware } = await import("srvx/log");
++    const { startPreview } = await import("../../preview.ts");
+     const rootDir = resolve((args.dir || args._dir || ".") as string);
+ 
+     const server = serve({
+--- a/src/cli/commands/serve.ts
++++ b/src/cli/commands/serve.ts
+@@ -1,10 +1,5 @@
+ import { defineCommand } from "citty";
+-import { consola } from "consola";
+-import { colors } from "consola/utils";
+-import { resolve } from "pathe";
+ import { commonArgs } from "../common.ts";
+-import { startUnbundledServer } from "../../build/unbundled/serve.ts";
+-import { runDev } from "./dev.ts";
+ 
+ export default defineCommand({
+   meta: {
+@@ -18,6 +13,11 @@
+     dev: { type: "boolean", description: "start in development mode (with hot reloading)" },
+   },
+   async run({ args }) {
++    const { consola } = await import("consola");
++    const { colors } = await import("consola/utils");
++    const { resolve } = await import("pathe");
++    const { startUnbundledServer } = await import("../../build/unbundled/serve.ts");
++    const { runDev } = await import("./dev.ts");
+     const rootDir = resolve((args.dir || args._dir || ".") as string);
+ 
+     if (args.dev) {
+--- a/src/cli/commands/task/list.ts
++++ b/src/cli/commands/task/list.ts
+@@ -1,7 +1,4 @@
+ import { defineCommand } from "citty";
+-import { consola } from "consola";
+-import { listTasks, loadOptions } from "nitro/builder";
+-import { resolve } from "pathe";
+ 
+ export default defineCommand({
+   meta: {
+@@ -15,6 +12,9 @@
+     },
+   },
+   async run({ args }) {
++    const { consola } = await import("consola");
++    const { resolve } = await import("pathe");
++    const { listTasks, loadOptions } = await import("nitro/builder");
+     const cwd = resolve((args.dir || args.cwd || ".") as string);
+     const options = await loadOptions({ rootDir: cwd }).catch(() => undefined);
+ 
+--- a/src/cli/commands/task/run.ts
++++ b/src/cli/commands/task/run.ts
+@@ -1,8 +1,4 @@
+ import { defineCommand } from "citty";
+-import { consola } from "consola";
+-import destr from "destr";
+-import { loadOptions, runTask } from "nitro/builder";
+-import { resolve } from "pathe";
+ 
+ export default defineCommand({
+   meta: {
+@@ -25,6 +21,10 @@
+     },
+   },
+   async run({ args }) {
++    const { consola } = await import("consola");
++    const { default: destr } = await import("destr");
++    const { resolve } = await import("pathe");
++    const { loadOptions, runTask } = await import("nitro/builder");
+     const cwd = resolve((args.dir || args.cwd || ".") as string);
+     const options = await loadOptions({ rootDir: cwd }).catch(() => undefined);
+ 

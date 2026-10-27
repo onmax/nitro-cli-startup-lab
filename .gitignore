@@ -1,0 +1,5 @@
+source/
+variants/
+results/
+final-matrix.json
+__pycache__/
